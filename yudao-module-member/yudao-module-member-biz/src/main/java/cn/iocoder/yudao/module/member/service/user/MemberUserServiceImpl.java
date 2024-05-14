@@ -3,7 +3,10 @@ package cn.iocoder.yudao.module.member.service.user;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.*;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -22,6 +25,8 @@ import cn.iocoder.yudao.module.system.api.social.SocialClientApi;
 import cn.iocoder.yudao.module.system.api.social.dto.SocialWxPhoneNumberInfoRespDTO;
 import cn.iocoder.yudao.module.system.enums.sms.SmsSceneEnum;
 import com.google.common.annotations.VisibleForTesting;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,10 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -107,6 +111,7 @@ public class MemberUserServiceImpl implements MemberUserService {
             // 昵称为空时，随机一个名字，避免一些依赖 nickname 的逻辑报错，或者有点丑。例如说，短信发送有昵称时~
             user.setNickname("用户" + RandomUtil.randomNumbers(6));
         }
+        user.setVipExpiration(new Date(0));
         memberUserMapper.insert(user);
 
         // 发送 MQ 消息：用户创建
@@ -310,6 +315,16 @@ public class MemberUserServiceImpl implements MemberUserService {
             memberUserMapper.updatePointIncr(id, point);
         } else if (point < 0) {
             return memberUserMapper.updatePointDecr(id, point) > 0;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateUserVip(Long id, Long duration) {
+        if (duration > 0) {
+            return memberUserMapper.updateVipIncr(id, duration) > 0;
+        } else if (duration < 0) {
+            return memberUserMapper.updateVipDecr(id, duration) > 0;
         }
         return true;
     }

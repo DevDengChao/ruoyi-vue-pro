@@ -16,6 +16,7 @@ import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -142,4 +143,8 @@ public class MemberUserDO extends TenantBaseDO {
      */
     private Long groupId;
 
+    /**
+     * 会员到期时间
+     */
+    private Date vipExpiration;
 }

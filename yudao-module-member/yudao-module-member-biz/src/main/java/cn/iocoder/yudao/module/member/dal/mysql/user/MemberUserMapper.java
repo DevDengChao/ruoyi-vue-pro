@@ -93,4 +93,33 @@ public interface MemberUserMapper extends BaseMapperX<MemberUserDO> {
         return update(null, lambdaUpdateWrapper);
     }
 
+    /**
+     * 更新用户会员（增加）
+     *
+     * @param id        用户编号
+     * @param incrCount 增加积分（正数）
+     */
+    default int updateVipIncr(Long id, Long incrCount) {
+        Assert.isTrue(incrCount > 0);
+        LambdaUpdateWrapper<MemberUserDO> lambdaUpdateWrapper = new LambdaUpdateWrapper<MemberUserDO>()
+                .setSql(" vip_expiration = vip_expiration + " + incrCount)
+                .eq(MemberUserDO::getId, id);
+        return update(null, lambdaUpdateWrapper);
+    }
+
+    /**
+     * 更新用户会员（减少）
+     *
+     * @param id        用户编号
+     * @param descCount 增加积分（负数）
+     * @return 更新行数
+     */
+    default int updateVipDecr(Long id, Long descCount) {
+        Assert.isTrue(descCount < 0);
+        LambdaUpdateWrapper<MemberUserDO> lambdaUpdateWrapper = new LambdaUpdateWrapper<MemberUserDO>()
+                .setSql(" vip_expiration = vip_expiration + " + descCount) // 负数，所以使用 + 号
+                .eq(MemberUserDO::getId, id);
+        return update(null, lambdaUpdateWrapper);
+    }
+
 }
