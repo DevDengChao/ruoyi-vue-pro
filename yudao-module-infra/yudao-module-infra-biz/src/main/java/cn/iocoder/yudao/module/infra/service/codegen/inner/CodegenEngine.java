@@ -273,6 +273,10 @@ public class CodegenEngine {
         bindingMap.put("columns", columns);
         bindingMap.put("primaryColumn", CollectionUtils.findFirst(columns, CodegenColumnDO::getPrimaryKey)); // 主键字段
         bindingMap.put("sceneEnum", CodegenSceneEnum.valueOf(table.getScene()));
+        bindingMap.put("businessNameForBackendFilePath", normalizeBusinessNameForBackendFilePath(table.getBusinessName()));
+        bindingMap.put("businessNameForBackendPackagePath", normalizeBusinessNameForBackendPackagePath(table.getBusinessName()));
+        bindingMap.put("businessNameForFrontend", normalizeBusinessNameForFrontend(table.getBusinessName()));
+        bindingMap.put("businessName", table.getBusinessName());
 
         // className 相关
         // 去掉指定前缀，将 TestDictType 转换成 DictType. 因为在 create 等方法后，不需要带上 Test 前缀

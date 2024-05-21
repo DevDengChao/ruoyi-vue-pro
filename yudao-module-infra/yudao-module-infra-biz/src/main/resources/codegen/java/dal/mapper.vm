@@ -1,13 +1,13 @@
-package ${basePackage}.module.${table.moduleName}.dal.mysql.${table.businessNameForBackendPackagePath};
+package ${basePackage}.module.${table.moduleName}.dal.mysql.${businessNameForBackendPackagePath};
 
 import java.util.*;
 
 import ${PageResultClassName};
 import ${QueryWrapperClassName};
 import ${BaseMapperClassName};
-import ${basePackage}.module.${table.moduleName}.dal.dataobject.${table.businessNameForBackendPackagePath}.${table.className}DO;
+import ${basePackage}.module.${table.moduleName}.dal.dataobject.${businessNameForBackendPackagePath}.${table.className}DO;
 import org.apache.ibatis.annotations.Mapper;
-import ${basePackage}.module.${table.moduleName}.controller.${sceneEnum.basePackage}.${table.businessNameForBackendPackagePath}.vo.*;
+import ${basePackage}.module.${table.moduleName}.controller.${sceneEnum.basePackage}.${businessNameForBackendPackagePath}.vo.*;
 
 ## 字段模板
 #macro(listCondition)

@@ -1,4 +1,4 @@
-package ${basePackage}.module.${table.moduleName}.service.${table.businessNameForBackendPackagePath};
+package ${basePackage}.module.${table.moduleName}.service.${businessNameForBackendPackagePath};
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -8,9 +8,9 @@ import ${jakartaPackage}.annotation.Resource;
 
 import ${baseFrameworkPackage}.test.core.ut.BaseDbUnitTest;
 
-import ${basePackage}.module.${table.moduleName}.controller.${sceneEnum.basePackage}.${table.businessNameForBackendPackagePath}.vo.*;
-import ${basePackage}.module.${table.moduleName}.dal.dataobject.${table.businessNameForBackendPackagePath}.${table.className}DO;
-import ${basePackage}.module.${table.moduleName}.dal.mysql.${table.businessNameForBackendPackagePath}.${table.className}Mapper;
+import ${basePackage}.module.${table.moduleName}.controller.${sceneEnum.basePackage}.${businessNameForBackendPackagePath}.vo.*;
+import ${basePackage}.module.${table.moduleName}.dal.dataobject.${businessNameForBackendPackagePath}.${table.className}DO;
+import ${basePackage}.module.${table.moduleName}.dal.mysql.${businessNameForBackendPackagePath}.${table.className}Mapper;
 import ${PageResultClassName};
 
 import ${jakartaPackage}.annotation.Resource;

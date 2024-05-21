@@ -1,4 +1,4 @@
-package ${basePackage}.module.${table.moduleName}.controller.${sceneEnum.basePackage}.${table.businessNameForBackendPackagePath};
+package ${basePackage}.module.${table.moduleName}.controller.${sceneEnum.basePackage}.${businessNameForBackendPackagePath};
 
 import org.springframework.web.bind.annotation.*;
 import ${jakartaPackage}.annotation.Resource;
@@ -26,13 +26,13 @@ import ${ExcelUtilsClassName};
 import ${ApiAccessLogClassName};
 import static ${OperateTypeEnumClassName}.*;
 
-import ${basePackage}.module.${table.moduleName}.controller.${sceneEnum.basePackage}.${table.businessNameForBackendPackagePath}.vo.*;
-import ${basePackage}.module.${table.moduleName}.dal.dataobject.${table.businessNameForBackendPackagePath}.${table.className}DO;
+import ${basePackage}.module.${table.moduleName}.controller.${sceneEnum.basePackage}.${businessNameForBackendPackagePath}.vo.*;
+import ${basePackage}.module.${table.moduleName}.dal.dataobject.${businessNameForBackendPackagePath}.${table.className}DO;
 ## 特殊：主子表专属逻辑
 #foreach ($subTable in $subTables)
-import ${basePackage}.module.${subTable.moduleName}.dal.dataobject.${subTable.businessNameForBackendPackagePath}.${subTable.className}DO;
+import ${basePackage}.module.${subTable.moduleName}.dal.dataobject.${businessNameForBackendPackagePath}.${subTable.className}DO;
 #end
-import ${basePackage}.module.${table.moduleName}.service.${table.businessNameForBackendPackagePath}.${table.className}Service;
+import ${basePackage}.module.${table.moduleName}.service.${businessNameForBackendPackagePath}.${table.className}Service;
 
 @Tag(name = "${sceneEnum.name} - ${table.classComment}")
 @RestController
