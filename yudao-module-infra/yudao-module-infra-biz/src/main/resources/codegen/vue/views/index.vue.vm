@@ -167,22 +167,32 @@
 </template>
 
 <script>
-import * as ${simpleClassName}Api from '@/api/${table.moduleName}/${table.businessName}';
-import ${simpleClassName}Form from './${simpleClassName}Form.vue';
-#if ($hasImageUploadColumn)
-import ImageUpload from '@/components/ImageUpload';
-#end
+    import * as ${simpleClassName}Api
+        from
+                '@/api/';
+    import ${simpleClassName}
+
+    Form
+    from
+    './';
+    import ImageUpload from '@/components/ImageUpload';
+    import FileUpload from '@/components/FileUpload';
+    import Editor from '@/components/Editor';
+    import ${subSimpleClassName}
+
+    List
+    from
+    './components/';
+        #if ($hasImageUploadColumn)
+        #end
 #if ($hasFileUploadColumn)
-import FileUpload from '@/components/FileUpload';
 #end
 #if ($hasEditorColumn)
-import Editor from '@/components/Editor';
 #end
 ## 特殊：主子表专属逻辑
 #if ( $table.templateType != 10 )
 #if ( $subTables && $subTables.size() > 0 )
     #foreach ($subSimpleClassName in $subSimpleClassNames)
-    import ${subSimpleClassName}List from './components/${subSimpleClassName}List.vue';
     #end
 #end
 #end
@@ -293,10 +303,10 @@ export default {
     },
     /** 删除按钮操作 */
     async handleDelete(row) {
-      const ${primaryColumn.javaField} = row.${primaryColumn.javaField};
+      const ${primaryColumn.javaField} = row.${primaryColumn.javaField}
       await this.#[[$modal]]#.confirm('是否确认删除${table.classComment}编号为"' + ${primaryColumn.javaField} + '"的数据项?')
       try {
-       await ${simpleClassName}Api.delete${simpleClassName}(${primaryColumn.javaField});
+       await ${simpleClassName}Api.delete${simpleClassName}(${primaryColumn.javaField})
        await this.getList();
        this.#[[$modal]]#.msgSuccess("删除成功");
       } catch {}

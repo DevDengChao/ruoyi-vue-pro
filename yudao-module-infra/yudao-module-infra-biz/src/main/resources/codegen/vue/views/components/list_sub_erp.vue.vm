@@ -61,10 +61,16 @@
 </template>
 
 <script>
-  import * as ${simpleClassName}Api from '@/api/${table.moduleName}/${table.businessName}';
-  #if ($table.templateType == 11)
-  import ${subSimpleClassName}Form from './${subSimpleClassName}Form.vue';
-  #end
+    import * as ${simpleClassName}Api
+        from
+                '@/api/';
+    import ${subSimpleClassName}
+
+    Form
+    from
+    './';
+        #if ($table.templateType == 11)
+        #end
   export default {
     name: "${subSimpleClassName}List",
 #if ($table.templateType == 11)
@@ -147,14 +153,14 @@
           this.#[[$modal]]#.msgError('请选择一个${table.classComment}');
           return;
         }
-        this.#[[$]]#refs["formRef"].open(id, this.${subJoinColumn.javaField});
+        this.#[[$]]#refs["formRef"].open(id, this.${subJoinColumn.javaField})
       },
       /** 删除按钮操作 */
       async handleDelete(row) {
-        const ${primaryColumn.javaField} = row.${primaryColumn.javaField};
-        await this.#[[$modal]]#.confirm('是否确认删除${table.classComment}编号为"' + ${primaryColumn.javaField} + '"的数据项?');
+        const ${primaryColumn.javaField} = row.${primaryColumn.javaField}
+        await this.#[[$modal]]#.confirm('是否确认删除${table.classComment}编号为"' + ${primaryColumn.javaField} + '"的数据项?')
         try {
-          await ${simpleClassName}Api.delete${subSimpleClassName}(${primaryColumn.javaField});
+          await ${simpleClassName}Api.delete${subSimpleClassName}(${primaryColumn.javaField})
           await this.getList();
           this.#[[$modal]]#.msgSuccess("删除成功");
         } catch {}
