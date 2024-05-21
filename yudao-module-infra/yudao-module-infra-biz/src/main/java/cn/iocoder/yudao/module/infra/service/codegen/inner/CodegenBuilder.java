@@ -113,8 +113,8 @@ public class CodegenBuilder {
         String tableName = table.getTableName().toLowerCase();
         // 第一步，_ 前缀的前面，作为 module 名字；第二步，moduleName 必须小写；
         table.setModuleName(subBefore(tableName, '_', false).toLowerCase());
-        // 第一步，第一个 _ 前缀的后面，作为 module 名字; 第二步，可能存在多个 _ 的情况，转换成驼峰; 第三步，businessName 必须小写；
-        table.setBusinessName(toCamelCase(subAfter(tableName, '_', false)).toLowerCase());
+        // 第一步，第一个 _ 前缀的后面，作为 module 名字; 第二步，可能存在多个 _ 的情况，保留 _ 以便维持命名风格; 第三步，businessName 必须小写；
+        table.setBusinessName(subAfter(tableName, '_', false).toLowerCase());
         // 驼峰 + 首字母大写；第一步，第一个 _ 前缀的后面，作为 class 名字；第二步，驼峰命名
         table.setClassName(upperFirst(toCamelCase(subAfter(tableName, '_', false))));
         // 去除结尾的表，作为类描述
@@ -214,7 +214,6 @@ public class CodegenBuilder {
         // description、memo、remark
         if (StrUtil.endWithAnyIgnoreCase(column.getColumnName(), "description", "memo", "remark")) {
             column.setExample(randomEle(new String[]{"你猜", "随便", "你说的对"}));
-            return;
         }
     }
 
