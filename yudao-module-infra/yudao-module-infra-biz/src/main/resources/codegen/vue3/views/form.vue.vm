@@ -139,11 +139,7 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-    import {
-            ${simpleClassName}Api, ${simpleClassName}VO
-    }
-        from
-                '@/api/'
+    import {${simpleClassName}Api, ${simpleClassName}VO} from '@/api/${table.moduleName}/${businessNameForFrontend}'
     import {handleTree} from '@/utils/tree'
         ## 特殊：树表专属逻辑
 #if ( $table.templateType == 2 )
