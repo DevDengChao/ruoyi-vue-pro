@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import org.apache.ibatis.type.JdbcType;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
@@ -23,23 +24,46 @@ public class CodegenBuilderTest extends BaseMockitoUnitTest {
     @InjectMocks
     private CodegenBuilder codegenBuilder;
 
-    @Test
-    public void testBuildTable() {
-        // 准备参数
-        TableInfo tableInfo = mock(TableInfo.class);
-        // mock 方法
-        when(tableInfo.getName()).thenReturn("system_user");
-        when(tableInfo.getComment()).thenReturn("用户");
+    @Nested
+    class WhenBuildTable {
 
-        // 调用
-        CodegenTableDO table = codegenBuilder.buildTable(tableInfo);
-        // 断言
-        assertEquals("system_user", table.getTableName());
-        assertEquals("用户", table.getTableComment());
-        assertEquals("system", table.getModuleName());
-        assertEquals("user", table.getBusinessName());
-        assertEquals("User", table.getClassName());
-        assertEquals("用户", table.getClassComment());
+        @Test
+        public void withSimpleBizName() {
+            // 准备参数
+            TableInfo tableInfo = mock(TableInfo.class);
+            // mock 方法
+            when(tableInfo.getName()).thenReturn("system_user");
+            when(tableInfo.getComment()).thenReturn("用户");
+
+            // 调用
+            CodegenTableDO table = codegenBuilder.buildTable(tableInfo);
+            // 断言
+            assertEquals("system_user", table.getTableName());
+            assertEquals("用户", table.getTableComment());
+            assertEquals("system", table.getModuleName());
+            assertEquals("user", table.getBusinessName());
+            assertEquals("User", table.getClassName());
+            assertEquals("用户", table.getClassComment());
+        }
+
+        @Test
+        public void withComplexBizName() {
+            // 准备参数
+            TableInfo tableInfo = mock(TableInfo.class);
+            // mock 方法
+            when(tableInfo.getName()).thenReturn("system_user_info");
+            when(tableInfo.getComment()).thenReturn("用户");
+
+            // 调用
+            CodegenTableDO table = codegenBuilder.buildTable(tableInfo);
+            // 断言
+            assertEquals("system_user_info", table.getTableName());
+            assertEquals("用户", table.getTableComment());
+            assertEquals("system", table.getModuleName());
+            assertEquals("user_info", table.getBusinessName());
+            assertEquals("UserInfo", table.getClassName());
+            assertEquals("用户", table.getClassComment());
+        }
     }
 
     @Test
