@@ -50,7 +50,7 @@ import static cn.hutool.core.text.CharSequenceUtil.*;
 /**
  * 代码生成的引擎，用于具体生成代码
  * 目前基于 {@link org.apache.velocity.app.Velocity} 模板引擎实现
- * <p>
+ *
  * 考虑到 Java 模板引擎的框架非常多，Freemarker、Velocity、Thymeleaf 等等，所以我们采用 hutool 封装的 {@link cn.hutool.extra.template.Template} 抽象
  *
  * @author 芋道源码
@@ -60,7 +60,7 @@ public class CodegenEngine {
 
     /**
      * 后端的模板配置
-     * <p>
+     *
      * key：模板在 resources 的地址
      * value：生成的路径
      */
@@ -96,7 +96,7 @@ public class CodegenEngine {
 
     /**
      * 后端的配置模版
-     * <p>
+     *
      * key1：UI 模版的类型 {@link CodegenFrontTypeEnum#getType()}
      * key2：模板在 resources 的地址
      * value：生成的路径
@@ -136,15 +136,6 @@ public class CodegenEngine {
                     vue3FilePath("views/${table.moduleName}/${table.businessNameForFrontend}/components/${subSimpleClassName}List.vue"))
             .put(CodegenFrontTypeEnum.VUE3.getType(), vue3TemplatePath("api/api.ts"),
                     vue3FilePath("api/${table.moduleName}/${table.businessNameForFrontend}/index.ts"))
-            // Vue3 Schema 模版
-            .put(CodegenFrontTypeEnum.VUE3_SCHEMA.getType(), vue3SchemaTemplatePath("views/data.ts"),
-                    vue3FilePath("views/${table.moduleName}/${table.businessNameForFrontend}/${classNameVar}.data.ts"))
-            .put(CodegenFrontTypeEnum.VUE3_SCHEMA.getType(), vue3SchemaTemplatePath("views/index.vue"),
-                    vue3FilePath("views/${table.moduleName}/${table.businessNameForFrontend}/index.vue"))
-            .put(CodegenFrontTypeEnum.VUE3_SCHEMA.getType(), vue3SchemaTemplatePath("views/form.vue"),
-                    vue3FilePath("views/${table.moduleName}/${table.businessNameForFrontend}/${simpleClassName}Form.vue"))
-            .put(CodegenFrontTypeEnum.VUE3_SCHEMA.getType(), vue3SchemaTemplatePath("api/api.ts"),
-                    vue3FilePath("api/${table.moduleName}/${table.businessNameForFrontend}/index.ts"))
             // Vue3 vben 模版
             .put(CodegenFrontTypeEnum.VUE3_VBEN.getType(), vue3VbenTemplatePath("views/data.ts"),
                     vue3FilePath("views/${table.moduleName}/${table.businessNameForFrontend}/${classNameVar}.data.ts"))
@@ -161,7 +152,7 @@ public class CodegenEngine {
 
     /**
      * 是否使用 jakarta 包，用于解决 Spring Boot 2.X 和 3.X 的兼容性问题
-     * <p>
+     *
      * true  - 使用 jakarta.validation.constraints.*
      * false - 使用 javax.validation.constraints.*
      */
@@ -280,7 +271,8 @@ public class CodegenEngine {
 
         // className 相关
         // 去掉指定前缀，将 TestDictType 转换成 DictType. 因为在 create 等方法后，不需要带上 Test 前缀
-        String simpleClassName = removePrefix(table.getClassName(), upperFirst(table.getModuleName()));
+        String simpleClassName = equalsAnyIgnoreCase(table.getClassName(), table.getModuleName()) ? table.getClassName()
+                : removePrefix(table.getClassName(), upperFirst(table.getModuleName()));
         bindingMap.put("simpleClassName", simpleClassName);
         bindingMap.put("simpleClassName_underlineCase", toUnderlineCase(simpleClassName)); // 将 DictType 转换成 dict_type
         bindingMap.put("classNameVar", lowerFirst(simpleClassName)); // 将 DictType 转换成 dictType，用于变量
@@ -344,6 +336,11 @@ public class CodegenEngine {
         Map<String, String> templates = new LinkedHashMap<>();
         templates.putAll(SERVER_TEMPLATES);
         templates.putAll(FRONT_TEMPLATES.row(frontType));
+        // 如果禁用单元测试，则移除对应的模版
+        if (Boolean.FALSE.equals(codegenProperties.getUnitTestEnable())) {
+            templates.remove(javaTemplatePath("test/serviceTest"));
+            templates.remove("codegen/sql/h2.vm");
+        }
         return templates;
     }
 
@@ -519,10 +516,6 @@ public class CodegenEngine {
     private static String vue3FilePath(String path) {
         return "yudao-ui-${sceneEnum.basePackage}-vue3/" + // 顶级目录
                 "src/" + path;
-    }
-
-    private static String vue3SchemaTemplatePath(String path) {
-        return "codegen/vue3_schema/" + path + ".vm";
     }
 
     private static String vue3VbenTemplatePath(String path) {

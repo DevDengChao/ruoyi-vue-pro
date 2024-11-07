@@ -1,41 +1,39 @@
 package cn.iocoder.yudao.module.system.api.social.dto;
 
-import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
-import cn.iocoder.yudao.framework.common.validation.InEnum;
-import cn.iocoder.yudao.module.system.enums.social.SocialTypeEnum;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
  * 获取小程序码 Request DTO
  *
- * @see <a href="https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/qrcode-link/qr-code/getUnlimitedQRCode.html">获取不限制的小程序码</a>
- *
  * @author HUIHUI
+ * @see <a href="https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/qrcode-link/qr-code/getUnlimitedQRCode.html">获取不限制的小程序码</a>
  */
 @Data
 public class SocialWxQrcodeReqDTO {
 
-    // TODO @puhui999：userId、userType 应该后续要搞成抽象参数；说白了，就是 path 的参数； socialType 应该去掉，因为就是微信的；
     /**
-     * 用户编号
+     * 页面路径不能携带参数（参数请放在scene字段里）
      */
-    @NotNull(message = "用户编号不能为空")
-    private Long userId;
+    public static final String SCENE = "";
     /**
-     * 用户类型
+     * 二维码宽度
      */
-    @InEnum(UserTypeEnum.class)
-    @NotNull(message = "用户类型不能为空")
-    private Integer userType;
-
+    public static final Integer WIDTH = 430;
     /**
-     * 社交平台的类型
+     * 自动配置线条颜色，如果颜色依然是黑色，则说明不建议配置主色调
      */
-    @InEnum(SocialTypeEnum.class)
-    @NotNull(message = "社交平台的类型不能为空")
-    private Integer socialType;
+    public static final Boolean AUTO_COLOR = true;
+    /**
+     * 检查 page 是否存在
+     */
+    public static final Boolean CHECK_PATH = true;
+    /**
+     * 是否需要透明底色
+     *
+     * hyaline 为 true 时，生成透明底色的小程序码
+     */
+    public static final Boolean HYALINE = true;
 
     /**
      * 场景
@@ -48,31 +46,21 @@ public class SocialWxQrcodeReqDTO {
     @NotEmpty(message = "页面路径不能为空")
     private String path;
     /**
-     * 要打开的小程序版本
-     */
-    private String envVersion;
-    /**
      * 二维码宽度
      */
     private Integer width;
 
-    // TODO @puhui999：autoColor
-
     /**
      * 是否需要透明底色
      */
-    private Boolean isAutoColor;
-
-    // TODO @puhui999： checkPath
+    private Boolean autoColor;
     /**
      * 是否检查 page 是否存在
      */
-    private Boolean isCheckPath;
-
-    // TODO @puhui999： hyaline
+    private Boolean checkPath;
     /**
      * 是否需要透明底色
      */
-    private Boolean isHyaline;
+    private Boolean hyaline;
 
 }

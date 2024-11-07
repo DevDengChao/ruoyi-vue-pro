@@ -2,7 +2,6 @@ package cn.iocoder.yudao.module.crm.service.statistics;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.iocoder.yudao.module.crm.controller.admin.statistics.vo.performance.CrmStatisticsPerformanceReqVO;
 import cn.iocoder.yudao.module.crm.controller.admin.statistics.vo.performance.CrmStatisticsPerformanceRespVO;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,6 @@ public class CrmStatisticsPerformanceServiceImpl implements CrmStatisticsPerform
     private AdminUserApi adminUserApi;
     @Resource
     private DeptApi deptApi;
-
 
     @Override
     public List<CrmStatisticsPerformanceRespVO> getContractCountPerformance(CrmStatisticsPerformanceReqVO performanceReqVO) {
@@ -69,7 +68,7 @@ public class CrmStatisticsPerformanceServiceImpl implements CrmStatisticsPerform
      * @return 员工业绩数据
      */
     private List<CrmStatisticsPerformanceRespVO> getPerformance(CrmStatisticsPerformanceReqVO performanceReqVO,
-               Function<CrmStatisticsPerformanceReqVO, List<CrmStatisticsPerformanceRespVO>> performanceFunction) {
+                                                                Function<CrmStatisticsPerformanceReqVO, List<CrmStatisticsPerformanceRespVO>> performanceFunction) {
 
         // 1. 获得用户编号数组
         List<Long> userIds = getUserIds(performanceReqVO);
@@ -79,13 +78,14 @@ public class CrmStatisticsPerformanceServiceImpl implements CrmStatisticsPerform
         performanceReqVO.setUserIds(userIds);
 
         // 2. 获得业绩数据
+        int year = performanceReqVO.getTimes()[0].getYear(); // 获取查询的年份
+        performanceReqVO.getTimes()[0] = performanceReqVO.getTimes()[0].minusYears(1);
         List<CrmStatisticsPerformanceRespVO> performanceList = performanceFunction.apply(performanceReqVO);
         Map<String, BigDecimal> performanceMap = convertMap(performanceList, CrmStatisticsPerformanceRespVO::getTime,
                 CrmStatisticsPerformanceRespVO::getCurrentMonthCount);
 
         // 3. 组装数据返回
         List<CrmStatisticsPerformanceRespVO> result = new ArrayList<>();
-        int year = DateUtil.thisYear();
         for (int month = 1; month <= 12; month++) {
             String currentMonth = String.format("%d%02d", year, month);
             String lastMonth = month == 1 ? String.format("%d%02d", year - 1, 12) : String.format("%d%02d", year, month - 1);
