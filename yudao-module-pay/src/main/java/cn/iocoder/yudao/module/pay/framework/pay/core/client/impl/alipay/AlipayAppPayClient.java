@@ -33,7 +33,7 @@ public class AlipayAppPayClient extends AbstractAlipayPayClient {
         // ① 通用的参数
         model.setOutTradeNo(reqDTO.getOutTradeNo());
         model.setSubject(reqDTO.getSubject());
-        model.setBody(reqDTO.getBody() + "test");
+        model.setBody(reqDTO.getBody());
         model.setTotalAmount(formatAmount(reqDTO.getPrice()));
         model.setTimeExpire(formatTime(reqDTO.getExpireTime()));
         model.setProductCode("QUICK_MSECURITY_PAY"); // 销售产品码：无线快捷支付产品
