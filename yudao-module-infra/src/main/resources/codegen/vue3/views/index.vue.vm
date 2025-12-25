@@ -8,6 +8,17 @@
       :inline="true"
       label-width="68px"
     >
+      <!--   todo: map field name to label   -->
+      <el-form-item label="查询字段">
+        <el-select v-model="searchFields" multiple collapse-tags>
+          <el-option v-for="field in fields" :key="field" :label="field" :value="field" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="展示字段">
+        <el-select multiple v-model="displayFields" collapse-tags>
+          <el-option v-for="field in fields" :key="field" :label="field" :value="field" />
+        </el-select>
+      </el-form-item>
     #foreach($column in $columns)
         #if ($column.listOperation)
             #set ($dictType = $column.dictType)
@@ -24,7 +35,7 @@
                 #set ($dictMethod = "getBoolDictOptions")
             #end
             #if ($column.htmlType == "input")
-      <el-form-item label="${comment}" prop="${javaField}">
+      <el-form-item label="${comment}" prop="${javaField}" v-if="searchFields.includes('${javaField}')">
         <el-input
           v-model="queryParams.${javaField}"
           placeholder="请输入${comment}"
@@ -34,7 +45,7 @@
         />
       </el-form-item>
             #elseif ($column.htmlType == "select" || $column.htmlType == "radio")
-      <el-form-item label="${comment}" prop="${javaField}">
+      <el-form-item label="${comment}" prop="${javaField}" v-if="searchFields.includes('${javaField}')">
         <el-select
           v-model="queryParams.${javaField}"
           placeholder="请选择${comment}"
@@ -55,7 +66,7 @@
       </el-form-item>
     #elseif($column.htmlType == "datetime")
       #if ($column.listOperationCondition != "BETWEEN")## 非范围
-      <el-form-item label="${comment}" prop="${javaField}">
+      <el-form-item label="${comment}" prop="${javaField}" v-if="searchFields.includes('${javaField}')">
         <el-date-picker
           v-model="queryParams.${javaField}"
           value-format="YYYY-MM-DD"
@@ -66,7 +77,7 @@
         />
       </el-form-item>
       #else## 范围
-      <el-form-item label="${comment}" prop="${javaField}">
+      <el-form-item label="${comment}" prop="${javaField}" v-if="searchFields.includes('${javaField}')">
         <el-date-picker
           v-model="queryParams.${javaField}"
           value-format="YYYY-MM-DD HH:mm:ss"
@@ -196,19 +207,20 @@
         prop="${javaField}"
         :formatter="dateFormatter"
         width="180px"
+        v-if="displayFields.includes('${javaField}')"
       />
         #elseif($column.dictType && "" != $column.dictType)## 数据字典
-      <el-table-column label="${comment}" align="center" prop="${javaField}">
+      <el-table-column label="${comment}" align="center" prop="${javaField}" v-if="displayFields.includes('${javaField}')" >
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.$dictType.toUpperCase()" :value="scope.row.${column.javaField}" />
         </template>
       </el-table-column>
         #else
-      <el-table-column label="${comment}" align="center" prop="${javaField}" />
+      <el-table-column label="${comment}" align="center" prop="${javaField}" v-if="displayFields.includes('${javaField}')" />
         #end
       #end
     #end
-      <el-table-column label="操作" align="center" min-width="120px">
+      <el-table-column label="操作" align="center" min-width="120px" v-if="displayFields.includes('${javaField}')">
         <template #default="scope">
           <el-button
             link
@@ -276,6 +288,7 @@ import ${simpleClassName}Form from './${simpleClassName}Form.vue'
 import ${subSimpleClassName}List from './components/${subSimpleClassName}List.vue'
 #end
 #end
+import { useLocalStorage } from '@vueuse/core'
 
 /** ${table.classComment} 列表 */
 defineOptions({ name: '${table.className}' })
@@ -285,6 +298,9 @@ const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
 const list = ref<${simpleClassName}[]>([]) // 列表的数据
+const fields = ref<Array<string>>([]) // 全部可选字段
+const searchFields = ref<Array<string>>([]) // 当前搜索的字段
+const displayFields = ref<Array<string>>([]) // 当前展示的字段
 ## 特殊：树表专属逻辑（树不需要分页接口）
 #if ( $table.templateType != 2 )
 const total = ref(0) // 列表的总页数
@@ -322,10 +338,42 @@ const getList = async () => {
     list.value = data.list
     total.value = data.total
   #end
+    selectSearchAndDisplayFields(data.list)
   } finally {
     loading.value = false
   }
 }
+
+function selectSearchAndDisplayFields(data: any[]) {
+  data.forEach((item: any) => {
+    Object.keys(item).forEach((key) => fields.value.push(key))
+  })
+
+  fields.value = Array.from(new Set(fields.value)).sort() // 去重后按字母顺排序
+  // 如果有 id 字段，则把 id 字段放到第一个
+  if (fields.value.includes('id')) {
+    fields.value.splice(fields.value.indexOf('id'), 1)
+    fields.value.unshift('id')
+  }
+
+  searchFields.value = useLocalStorage('search-fields', { audit: fields.value }).value.audit
+  displayFields.value = useLocalStorage('display-fields', { audit: fields.value }).value.audit
+}
+
+watch(
+    searchFields,
+    function (val) {
+      useLocalStorage('search-fields', { audit: val }).value.audit = val
+    },
+    { deep: true }
+)
+watch(
+    displayFields,
+    function (val) {
+      useLocalStorage('display-fields', { audit: val }).value.audit = val
+    },
+    { deep: true }
+)
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
